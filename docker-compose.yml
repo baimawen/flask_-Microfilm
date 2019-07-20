@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+
+  webapp:
+    build: .
+    container_name: webapp
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./src:/src
+      - /opt/log:/var/log
+    ports:
+      - "8000"
+    networks:
+      - webnet
+    
+  
+  mysql:
+    image: mysql:5.6
+    container_name: mysql-data
+    environment:
+      - MYSQL_ROOT_PASSWORD=rw
+      - MYSQL_DATABASE=movie
+    volumes:
+        - ./config/movie.sql:/docker-entrypoint-initdb.d/movie.sql
+        - ~/mysql/data:/var/lib/mysql
+    command: [
+            '--character-set-server=utf8',
+            '--collation-server=utf8_general_ci',
+            '--default-time-zone=+8:00' 
+            ]
+    restart: always
+    ports:
+      - "3306"
+    networks:
+      - webnet
+  
+  ngxin:
+    image: nginx
+    volumes:
+      - ./config/flask_nginx.conf:/etc/nginx/conf.d/flask_nginx.conf
+    depends_on:
+      - webapp
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+
+  redis:
+    image: redis:4.0
+    container_name: redis-data
+    restart: always
+    volumes:
+      - ~/redis/data:/data
+    command: redis-server --appendonly yes --requirepass "redis"
+    ports:
+      - "6379"
+    networks:
+      - webnet
+
+networks:
+  webnet:
