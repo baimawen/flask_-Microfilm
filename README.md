@@ -11,6 +11,16 @@ Flask:使用post与get请求、上传文件、cookie获取与响应、404处理,
 
 视频技术:jwplayer播放器插件、Dplayer播放器插件、flv、MP4视频格式支持
 
+#### 运行项目
+```
+
+在安装docker以及docker-compose的情况下
+git clone https://github.com/baimawen/flask_-Microfilm.git && cd flask_-Microfilm
+
+docker-compose build #构建镜像
+docker-compose up # 启动
+
+```
 模块划分:
   - 前台(home)
     - 会员登陆及注册
